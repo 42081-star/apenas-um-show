@@ -1,0 +1,893 @@
+/* ==========================================================================
+   Apenas Um Show: Pancadaria - CSS Super Otimizado para 60 FPS (Brawler Puro)
+   Com Roster de 6 Personagens, Tela de Seleção e Suporte Total ao Player 2
+   ========================================================================== */
+
+:root {
+    --neon-blue: #00d2ff;
+    --neon-pink: #ff007f;
+    --neon-yellow: #f1c40f;
+    --neon-green: #2ecc71;
+    --neon-orange: #e67e22;
+    --font-comic: "Impact", "Arial Black", -apple-system, sans-serif;
+    --font-body: "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    background-color: #070210;
+    background-image: linear-gradient(180deg, #0d041a 0%, #05010a 100%);
+    color: #ffffff;
+    font-family: var(--font-body);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    padding: 8px;
+}
+
+#game-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    background: #000;
+    border: 4px solid #331557;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cabeçalho */
+#game-header {
+    background: linear-gradient(90deg, #1b0c3a, #35105e, #1b0c3a);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    border-bottom: 3px solid #ff007f;
+}
+
+.header-title {
+    font-family: var(--font-comic);
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 2px 2px 0px #000;
+}
+
+.icon-btn {
+    background: #250d47;
+    border: 2px solid #a23bff;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.icon-btn:hover {
+    background: #a23bff;
+}
+
+/* Viewport */
+#viewport-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    overflow: hidden;
+}
+
+#game-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Telas DOM */
+.game-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(10, 4, 24, 0.92);
+    z-index: 10;
+    padding: 16px;
+}
+
+.game-screen.hidden {
+    display: none !important;
+}
+
+/* Banner de Título */
+.title-banner {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.logo-sup {
+    font-family: var(--font-comic);
+    font-size: 1.3rem;
+    color: #f1c40f;
+    letter-spacing: 2px;
+}
+
+.logo-main {
+    font-family: var(--font-comic);
+    font-size: 3.4rem;
+    line-height: 1;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 3px 3px 0 #000;
+    letter-spacing: 2px;
+}
+
+.logo-sub {
+    font-family: var(--font-comic);
+    font-size: 1.05rem;
+    color: #00d2ff;
+    margin-top: 4px;
+}
+
+/* Botões Arcade */
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 320px;
+    margin-bottom: 14px;
+}
+
+.btn-arcade {
+    font-family: var(--font-comic);
+    font-size: 1.3rem;
+    padding: 11px 18px;
+    border-radius: 10px;
+    border: 3px solid #000;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 0 #000;
+    transition: transform 0.08s ease;
+}
+
+.btn-arcade:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #000;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, #ff007f, #b30059);
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.btn-secondary {
+    background: linear-gradient(180deg, #00d2ff, #007799);
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.btn-tertiary {
+    background: #f1c40f;
+    color: #000;
+}
+
+.menu-guide-box {
+    background: rgba(24, 10, 52, 0.85);
+    border: 2px solid #5a2898;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    text-align: center;
+    color: #ddd;
+    max-width: 650px;
+}
+
+/* --- TELA DE SELEÇÃO DE PERSONAGENS (CHARACTER SELECT) --- */
+.roster-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 8px;
+}
+
+.char-card {
+    position: relative;
+    background: rgba(28, 12, 60, 0.85);
+    border: 3px solid #53238a;
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+}
+
+.char-card:hover {
+    border-color: #00d2ff;
+    transform: translateY(-2px);
+    background: rgba(45, 18, 95, 0.95);
+}
+
+.char-card.selected-p1 {
+    border-color: #00d2ff;
+    background: rgba(0, 120, 180, 0.35);
+    box-shadow: 0 0 12px rgba(0, 210, 255, 0.5);
+}
+
+.char-card.selected-p2 {
+    border-color: #ff007f;
+    background: rgba(180, 0, 80, 0.35);
+    box-shadow: 0 0 12px rgba(255, 0, 127, 0.5);
+}
+
+.char-card.selected-both {
+    border-color: #f1c40f;
+    background: linear-gradient(135deg, rgba(0, 120, 180, 0.35), rgba(180, 0, 80, 0.35));
+    box-shadow: 0 0 14px rgba(241, 196, 15, 0.6);
+}
+
+.char-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    background: #1b0938;
+    border: 2px solid #552288;
+    flex-shrink: 0;
+}
+
+.char-info {
+    flex-grow: 1;
+}
+
+.char-name {
+    font-family: var(--font-comic);
+    font-size: 1.15rem;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.char-spec {
+    font-size: 0.72rem;
+    color: #f1c40f;
+    margin-top: 2px;
+}
+
+.char-badge {
+    font-family: var(--font-comic);
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #fff;
+}
+
+.badge-p1 {
+    background: #00d2ff;
+    color: #000;
+}
+
+.badge-p2 {
+    background: #ff007f;
+    color: #fff;
+}
+
+.badge-both {
+    background: #f1c40f;
+    color: #000;
+}
+
+/* Dificuldade */
+.difficulty-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.diff-btn {
+    background: #231045;
+    border: 2px solid #5a2898;
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.diff-btn.active {
+    background: #ff007f;
+    border-color: #fff;
+}
+
+/* HUD de Combate */
+#fight-hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.fighter-hud-card {
+    display: flex;
+    flex-direction: column;
+    width: 38%;
+}
+
+.fighter-hud-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.fighter-hud-name {
+    font-family: var(--font-comic);
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    color: #ffffff;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.rounds-won-container {
+    display: flex;
+    gap: 6px;
+}
+
+.round-dot {
+    width: 12px;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.round-dot.won {
+    background: #f1c40f;
+}
+
+.hp-bar-container {
+    height: 22px;
+    background: #111;
+    border: 3px solid #000;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.hp-bar-fill {
+    height: 100%;
+    width: 100%;
+    transition: width 0.1s linear;
+}
+
+.p1-side .hp-bar-fill {
+    background: linear-gradient(90deg, #00d2ff, #007799);
+}
+
+.p2-side .hp-bar-fill {
+    background: linear-gradient(270deg, #e67e22, #a04000);
+}
+
+.special-badge-pill {
+    margin-top: 4px;
+    font-family: var(--font-comic);
+    font-size: 0.85rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: rgba(0, 0, 0, 0.7);
+    color: #aaa;
+    width: fit-content;
+}
+
+.special-badge-pill.special-active {
+    background: #ff007f;
+    color: #fff;
+    border-color: #fff;
+}
+
+.vs-logo-center {
+    font-family: var(--font-comic);
+    font-size: 1.8rem;
+    color: #f1c40f;
+    text-shadow: 2px 2px 0 #000;
+    align-self: center;
+}
+
+/* Banner de Round / K.O. */
+#round-banner {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 8;
+    pointer-events: none;
+}
+
+#banner-main-text {
+    font-family: var(--font-comic);
+    font-size: 3.8rem;
+    color: #fff;
+    text-shadow: 4px 4px 0 #000;
+    letter-spacing: 3px;
+}
+
+#banner-sub-text {
+    font-family: var(--font-comic);
+    font-size: 1.6rem;
+    color: #f1c40f;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.banner-animate {
+    animation: bannerQuick 0.9s ease-out forwards;
+}
+
+@keyframes bannerQuick {
+    0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0; }
+    20% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 0; }
+}
+
+/* Fim de Partida */
+.screen-title {
+    font-family: var(--font-comic);
+    font-size: 2.1rem;
+    color: #f1c40f;
+    text-shadow: 3px 3px 0 #000;
+    margin-bottom: 6px;
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    width: 100%;
+    max-width: 500px;
+    margin: 12px 0;
+}
+
+.fighter-stat-card {
+    background: rgba(26, 11, 56, 0.85);
+    border: 2px solid #5a2898;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 0.9rem;
+}
+
+.fighter-stat-card h3 {
+    font-family: var(--font-comic);
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+    color: #00d2ff;
+}
+
+/* Controles Virtuais */
+#virtual-controls {
+    background: #0d041c;
+    border-top: 3px solid #2a114f;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.vcontrols-player-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    min-width: 280px;
+}
+
+.vgroup-tag {
+    font-family: var(--font-comic);
+    font-size: 0.76rem;
+    letter-spacing: 0.5px;
+}
+
+.p1-tag { color: #00d2ff; }
+.p2-tag { color: #e67e22; }
+
+.vpad-cluster {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.vbtn {
+    background: #250f4a;
+    border: 2px solid #6b2eb8;
+    color: #fff;
+    font-family: var(--font-comic);
+    font-size: 0.88rem;
+    padding: 7px 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #000;
+}
+
+.vbtn:active {
+    background: #6b2eb8;
+    transform: translateY(2px);
+    box-shadow: 0 0 0 #000;
+}
+
+.vbtn-atk {
+    background: #ff007f;
+    border-color: #fff;
+}
+
+.vbtn-spec {
+    background: #f1c40f;
+    color: #000;
+    border-color: #fff;
+}
+
+.p2-atk {
+    background: #e67e22;
+}
+
+.p2-spec {
+    background: #9b59b6;
+    color: #fff;
+}
+
+/* Rodapé */
+#keyboard-legend {
+    background: #06020c;
+    padding: 6px 12px;
+    font-size: 0.74rem;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #1a0833;
+}
+
+.legend-group strong {
+    color: #00d2ff;
+}
+
+/* ==========================================================================
+   MODO TORNEIO (TORRE MORTAL ESTILO MORTAL KOMBAT)
+   ========================================================================== */
+
+.btn-tournament {
+    background: linear-gradient(180deg, #f39c12 0%, #d35400 100%);
+    border-color: #f1c40f;
+    color: #ffffff;
+    text-shadow: 2px 2px 0px #000;
+    box-shadow: 0 4px 0 #873600, 0 0 12px rgba(243, 156, 18, 0.4);
+}
+
+.btn-tournament:hover {
+    background: linear-gradient(180deg, #f1c40f 0%, #e67e22 100%);
+    box-shadow: 0 4px 0 #873600, 0 0 18px rgba(241, 196, 15, 0.7);
+}
+
+.vs-center-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.tournament-hud-badge {
+    background: #d35400;
+    border: 2px solid #f1c40f;
+    color: #fff;
+    font-family: var(--font-comic);
+    font-size: 0.8rem;
+    padding: 2px 10px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+    box-shadow: 0 0 8px rgba(241, 196, 15, 0.6);
+    animation: pulseGlow 1.4s infinite alternate ease-in-out;
+}
+
+@keyframes pulseGlow {
+    from { transform: scale(1); filter: drop-shadow(0 0 2px #f1c40f); }
+    to { transform: scale(1.05); filter: drop-shadow(0 0 8px #f39c12); }
+}
+
+/* Torre Mortal Screen */
+.tower-header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.tower-badge-top {
+    font-family: var(--font-comic);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: #f1c40f;
+    text-transform: uppercase;
+}
+
+.tower-gold-title {
+    color: #f39c12;
+    text-shadow: 3px 3px 0 #000, 0 0 16px rgba(243, 156, 18, 0.6);
+}
+
+.tower-desc {
+    font-size: 0.85rem;
+    color: #ccc;
+}
+
+.tower-ladder {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    max-width: 480px;
+    margin: 6px auto;
+    perspective: 800px;
+}
+
+.tower-step {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #180929 0%, #291244 50%, #180929 100%);
+    border: 2px solid #4a2179;
+    border-radius: 8px;
+    padding: 6px 14px;
+    position: relative;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.tower-step-floor {
+    font-family: var(--font-comic);
+    font-size: 0.9rem;
+    color: #bbb;
+    min-width: 70px;
+    text-align: left;
+}
+
+.tower-step-char {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    justify-content: center;
+}
+
+.tower-step-avatar {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.tower-step-name {
+    font-family: var(--font-comic);
+    font-size: 1.05rem;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
+.tower-step-status {
+    min-width: 85px;
+    text-align: right;
+    font-family: var(--font-comic);
+    font-size: 0.8rem;
+}
+
+/* Estados dos Degraus da Torre */
+.tower-step.floor-boss {
+    background: linear-gradient(90deg, #3d0c0c 0%, #681515 50%, #3d0c0c 100%);
+    border-color: #e74c3c;
+    border-width: 3px;
+    box-shadow: 0 0 14px rgba(231, 76, 60, 0.5);
+}
+
+.tower-step.floor-boss .tower-step-floor {
+    color: #ff5252;
+    font-weight: bold;
+}
+
+.tower-step.floor-current {
+    border-color: #f1c40f !important;
+    background: linear-gradient(90deg, #351c05 0%, #57310a 50%, #351c05 100%) !important;
+    transform: scale(1.04);
+    box-shadow: 0 0 18px rgba(241, 196, 15, 0.7);
+    z-index: 2;
+}
+
+.tower-step.floor-current .tower-step-status {
+    color: #f1c40f;
+    animation: pulseText 1s infinite alternate;
+}
+
+@keyframes pulseText {
+    from { opacity: 0.7; }
+    to { opacity: 1; }
+}
+
+.tower-step.floor-defeated {
+    background: #0d0416;
+    border-color: #271038;
+    opacity: 0.65;
+}
+
+.tower-step.floor-defeated .tower-step-name {
+    color: #777;
+    text-decoration: line-through;
+}
+
+.tower-step.floor-defeated .tower-step-status {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.tower-step.floor-locked {
+    opacity: 0.45;
+    filter: grayscale(0.8);
+}
+
+.tower-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+/* Continue Screen (Mortal Kombat Style) */
+.continue-overlay {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.continue-title {
+    font-family: var(--font-comic);
+    font-size: 2.8rem;
+    color: #e74c3c;
+    letter-spacing: 2px;
+    text-shadow: 3px 3px 0 #000, 0 0 20px rgba(231, 76, 60, 0.8);
+    margin-bottom: 2px;
+}
+
+.continue-sub {
+    font-size: 1.1rem;
+    color: #f1c40f;
+    margin-bottom: 8px;
+}
+
+.continue-clock {
+    font-family: var(--font-comic);
+    font-size: 5rem;
+    color: #ffffff;
+    text-shadow: 4px 4px 0 #000, 0 0 25px rgba(255, 0, 127, 0.9);
+    line-height: 1;
+    margin: 8px 0;
+    animation: clockBounce 1s infinite;
+}
+
+@keyframes clockBounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); color: #ff007f; }
+    100% { transform: scale(1); }
+}
+
+.continue-info {
+    font-size: 1rem;
+    margin-bottom: 16px;
+}
+
+.continue-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* Tela de Campeão Supremo */
+.champion-trophy {
+    font-size: 3.5rem;
+    animation: trophyFloat 2s infinite alternate ease-in-out;
+    filter: drop-shadow(0 0 16px rgba(241, 196, 15, 0.8));
+    margin-bottom: 4px;
+}
+
+@keyframes trophyFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
+}
+
+.champion-char-name {
+    font-family: var(--font-comic);
+    font-size: 1.6rem;
+    color: #00d2ff;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 12px;
+}
+
+.champion-story-box {
+    background: rgba(27, 12, 58, 0.9);
+    border: 3px solid #f1c40f;
+    border-radius: 12px;
+    padding: 14px 20px;
+    max-width: 600px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 0 25px rgba(241, 196, 15, 0.3);
+    margin-bottom: 12px;
+}
+
+.champion-avatar-circle {
+    font-size: 2.8rem;
+    background: #0b0217;
+    border: 2px solid #f1c40f;
+    border-radius: 50%;
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.champion-story-desc {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: #ecf0f1;
+    text-align: left;
+}
+
+.champion-stats-pill {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #4a2179;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+@media (max-width: 768px) {
+    .roster-grid { grid-template-columns: repeat(2, 1fr); }
+    .logo-main { font-size: 2.5rem; }
+    .stats-container { grid-template-columns: 1fr; }
+    #keyboard-legend { display: none; }
+}

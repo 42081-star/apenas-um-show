@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apenas Um Show: Pancadaria</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <main id="game-wrapper">
+        <!-- Cabeçalho do Jogo -->
+        <header id="game-header">
+            <div class="header-title">APENAS UM SHOW: PANCADARIA 🥊</div>
+            <div class="header-controls">
+                <button id="btn-toggle-sound" class="icon-btn" aria-label="Ligar ou desligar som">🔊 Som: Ligado</button>
+            </div>
+        </header>
+
+        <!-- Área Principal de Exibição (Canvas + Telas DOM) -->
+        <div id="viewport-container">
+            <!-- Canvas de Combate 2D Brawler Super Otimizado -->
+            <canvas id="game-canvas"></canvas>
+
+            <!-- HUD de Combate (Sobreposto ao Canvas) -->
+            <div id="fight-hud" class="hidden">
+                <!-- Lado do Jogador 1 -->
+                <div class="fighter-hud-card p1-side">
+                    <div class="fighter-hud-info">
+                        <span id="p1-name" class="fighter-hud-name">Mordecai</span>
+                        <div id="p1-rounds" class="rounds-won-container"></div>
+                    </div>
+                    <div class="hp-bar-container">
+                        <div id="p1-hp-fill" class="hp-bar-fill"></div>
+                    </div>
+                    <div id="p1-special-badge" class="special-badge-pill">ESPECIAL: 50%</div>
+                </div>
+
+                <!-- Logo VS Central e Tag de Torneio -->
+                <div class="vs-center-group">
+                    <div id="tournament-hud-tag" class="tournament-hud-badge hidden">🏆 ANDAR 1/5</div>
+                    <div class="vs-logo-center">VS</div>
+                </div>
+
+                <!-- Lado do Jogador 2 -->
+                <div class="fighter-hud-card p2-side">
+                    <div class="fighter-hud-info">
+                        <div id="p2-rounds" class="rounds-won-container"></div>
+                        <span id="p2-name" class="fighter-hud-name">Rigby</span>
+                    </div>
+                    <div class="hp-bar-container">
+                        <div id="p2-hp-fill" class="hp-bar-fill"></div>
+                    </div>
+                    <div id="p2-special-badge" class="special-badge-pill">ESPECIAL: 50%</div>
+                </div>
+            </div>
+
+            <!-- Banner Animado de Round / K.O. -->
+            <div id="round-banner" class="hidden">
+                <h1 id="banner-main-text">ROUND 1</h1>
+                <p id="banner-sub-text">LUTE!</p>
+            </div>
+
+            <!-- TELA 1: MENU PRINCIPAL -->
+            <section id="screen-start" class="game-screen">
+                <div class="title-banner">
+                    <div class="logo-sup">ARENA DO PARQUE</div>
+                    <h1 class="logo-main">APENAS UM SHOW<br><span style="color:#ff007f;">PANCADARIA</span></h1>
+                    <div class="logo-sub">Combate 2D Brawler Arcade a 60 FPS!</div>
+                </div>
+
+                <div class="menu-buttons">
+                    <button id="btn-mode-tournament" class="btn-arcade btn-tournament">🏆 Modo Torneio (Torre Mortal)</button>
+                    <button id="btn-mode-1p" class="btn-arcade btn-primary">🥊 1 Jogador (vs CPU)</button>
+                    <button id="btn-mode-2p" class="btn-arcade btn-secondary">👥 2 Jogadores (Local)</button>
+                </div>
+
+                <div class="menu-guide-box">
+                    <strong>6 Lutadores Lendários:</strong> Mordecai, Rigby, Benson, Pairulito, Musculoso e Saltitão!
+                </div>
+            </section>
+
+            <!-- TELA 2: SELEÇÃO DE PERSONAGENS (CHARACTER SELECT) -->
+            <section id="screen-select" class="game-screen hidden">
+                <h2 id="select-title" class="screen-title" style="margin-bottom: 4px;">ESCOLHA SEU LUTADOR</h2>
+                <p id="select-subtitle" style="font-size: 0.95rem; color: #f1c40f; margin-bottom: 12px;">Jogador 1: Selecione seu personagem</p>
+
+                <!-- Grade de 6 Personagens -->
+                <div class="roster-grid">
+                    <div class="char-card selected-p1" data-char="mordecai">
+                        <div class="char-avatar avatar-mordecai">🐦</div>
+                        <div class="char-info">
+                            <div class="char-name">Mordecai</div>
+                            <div class="char-spec">Soco Mortal</div>
+                        </div>
+                        <div class="char-badge badge-p1">P1</div>
+                    </div>
+
+                    <div class="char-card selected-p2" data-char="rigby">
+                        <div class="char-avatar avatar-rigby">🦝</div>
+                        <div class="char-info">
+                            <div class="char-name">Rigby</div>
+                            <div class="char-spec">Hamboning</div>
+                        </div>
+                        <div class="char-badge badge-p2">P2</div>
+                    </div>
+
+                    <div class="char-card" data-char="benson">
+                        <div class="char-avatar avatar-benson">🔴</div>
+                        <div class="char-info">
+                            <div class="char-name">Benson</div>
+                            <div class="char-spec">Estão Demitidos!</div>
+                        </div>
+                        <div class="char-badge hidden"></div>
+                    </div>
+
+                    <div class="char-card" data-char="pairulito">
+                        <div class="char-avatar avatar-pairulito">🍭</div>
+                        <div class="char-info">
+                            <div class="char-name">Pairulito</div>
+                            <div class="char-spec">Fúria Cósmica</div>
+                        </div>
+                        <div class="char-badge hidden"></div>
+                    </div>
+
+                    <div class="char-card" data-char="musculoso">
+                        <div class="char-avatar avatar-musculoso">💪</div>
+                        <div class="char-info">
+                            <div class="char-name">Musculoso</div>
+                            <div class="char-spec">Giro da Camisa</div>
+                        </div>
+                        <div class="char-badge hidden"></div>
+                    </div>
+
+                    <div class="char-card" data-char="saltitao">
+                        <div class="char-avatar avatar-saltitao">🦍</div>
+                        <div class="char-info">
+                            <div class="char-name">Saltitão</div>
+                            <div class="char-spec">Pancada Imortal</div>
+                        </div>
+                        <div class="char-badge hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Painel de Dificuldade da CPU (no modo 1P) -->
+                <div id="select-diff-panel" class="difficulty-selector" style="margin: 10px 0;">
+                    <span style="font-weight:bold; color:#f1c40f;">Dificuldade da CPU:</span>
+                    <button class="diff-btn" data-diff="facil">Fácil</button>
+                    <button class="diff-btn active" data-diff="normal">Normal</button>
+                    <button class="diff-btn" data-diff="dificil">Difícil</button>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div style="display:flex; gap:12px; margin-top: 6px;">
+                    <button id="btn-start-fight" class="btn-arcade btn-primary" style="padding:10px 24px;">ENTRAR NA ARENA! ⚔️</button>
+                    <button id="btn-back-to-menu" class="btn-arcade btn-tertiary" style="padding:10px 18px;">Voltar</button>
+                </div>
+            </section>
+
+            <!-- TELA 3: FIM DE PARTIDA (VITÓRIA) -->
+            <section id="screen-match-over" class="game-screen hidden">
+                <h1 id="match-winner-title" class="screen-title" style="color:#00d2ff;">MORDECAI VENCEU!</h1>
+                <p id="match-winner-subtitle" style="margin-bottom:14px; font-size:1.1rem; color:#fff;">Vitória épica na arena do parque!</p>
+
+                <div class="stats-container">
+                    <div id="stats-p1" class="fighter-stat-card"></div>
+                    <div id="stats-p2" class="fighter-stat-card"></div>
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:16px;">
+                    <button id="btn-rematch" class="btn-arcade btn-primary">Lutar Novamente</button>
+                    <button id="btn-menu-from-end" class="btn-arcade btn-tertiary">Menu Principal</button>
+                </div>
+            </section>
+
+            <!-- TELA 4: TORRE DO TORNEIO (ESTILO MORTAL KOMBAT) -->
+            <section id="screen-tower" class="game-screen hidden">
+                <div class="tower-header">
+                    <div class="tower-badge-top">GRANDE TORNEIO DO PARQUE</div>
+                    <h2 class="screen-title tower-gold-title">TORRE MORTAL</h2>
+                    <p id="tower-status-msg" class="tower-desc">Suba os 5 andares da torre e derrote o Chefe Supremo!</p>
+                </div>
+
+                <!-- Estrutura Vertical dos Degraus da Torre -->
+                <div class="tower-ladder" id="tower-ladder">
+                    <!-- Gerado dinamicamente pelo JavaScript -->
+                </div>
+
+                <div class="tower-actions">
+                    <button id="btn-tower-fight" class="btn-arcade btn-tournament">⚔️ LUTAR NO ANDAR <span id="tower-fight-floor-num">1</span>!</button>
+                    <button id="btn-tower-giveup" class="btn-arcade btn-tertiary">Desistir</button>
+                </div>
+            </section>
+
+            <!-- TELA 5: CONTINUE? (ESTILO MORTAL KOMBAT) -->
+            <section id="screen-continue" class="game-screen hidden">
+                <div class="continue-overlay">
+                    <h1 class="continue-title">VOCÊ CAIU!</h1>
+                    <p id="continue-floor-text" class="continue-sub">Andar 1 da Torre</p>
+                    <div id="continue-timer" class="continue-clock">9</div>
+                    <div class="continue-info">Continues restantes: <span id="continues-left-count" style="color:#00d2ff; font-weight:bold;">3</span></div>
+                    <div class="continue-actions">
+                        <button id="btn-continue-yes" class="btn-arcade btn-primary">TENTAR NOVAMENTE! ⚡</button>
+                        <button id="btn-continue-no" class="btn-arcade btn-tertiary">Desistir</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA 6: CAMPEÃO DO TORNEIO (FINAL E EPÍLOGO) -->
+            <section id="screen-tower-win" class="game-screen hidden">
+                <div class="champion-trophy">🏆</div>
+                <h1 class="screen-title" style="color: #f1c40f; text-shadow: 0 0 15px rgba(241, 196, 15, 0.8);">CAMPEÃO SUPREMO!</h1>
+                <h2 id="champion-char-name" class="champion-char-name">MORDECAI VENCEU O TORNEIO!</h2>
+                
+                <div class="champion-story-box">
+                    <div id="champion-char-avatar" class="champion-avatar-circle">🐦</div>
+                    <p id="champion-story-text" class="champion-story-desc">
+                        Após nocautear todos os lutadores do parque, Mordecai ergue a taça da glória eterna!
+                    </p>
+                </div>
+
+                <div id="champion-stats-box" class="champion-stats-pill">
+                    <!-- Resumo das estatísticas da torre -->
+                </div>
+
+                <div style="display:flex; gap:12px; margin-top:12px;">
+                    <button id="btn-tower-restart" class="btn-arcade btn-tournament">Jogar Outro Torneio</button>
+                    <button id="btn-tower-menu" class="btn-arcade btn-tertiary">Menu Principal</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Controles Virtuais na Tela (Touch / Mouse) -->
+        <nav id="virtual-controls" aria-label="Controles Virtuais">
+            <!-- Controles do Jogador 1 -->
+            <div id="p1-vcontrols" class="vcontrols-player-group">
+                <div class="vgroup-tag p1-tag">P1 (Mordecai)</div>
+                <div class="vpad-cluster">
+                    <button id="vbtn-p1-left" class="vbtn" aria-label="P1 Esquerda">◀ A</button>
+                    <button id="vbtn-p1-right" class="vbtn" aria-label="P1 Direita">D ▶</button>
+                    <button id="vbtn-p1-jump" class="vbtn" aria-label="P1 Pulo">▲ Pulo</button>
+                    <button id="vbtn-p1-block" class="vbtn" aria-label="P1 Defesa">▼ Def</button>
+                    <button id="vbtn-p1-punch" class="vbtn vbtn-atk" aria-label="P1 Soco">👊 Soco [F]</button>
+                    <button id="vbtn-p1-kick" class="vbtn vbtn-atk" aria-label="P1 Chute">🦵 Chute [G]</button>
+                    <button id="vbtn-p1-special" class="vbtn vbtn-spec" aria-label="P1 Especial">★ Esp [H]</button>
+                </div>
+            </div>
+
+            <!-- Controles do Jogador 2 (Exibidos em 2P ou clicáveis) -->
+            <div id="p2-vcontrols" class="vcontrols-player-group hidden">
+                <div class="vgroup-tag p2-tag">P2 (Rigby)</div>
+                <div class="vpad-cluster">
+                    <button id="vbtn-p2-left" class="vbtn" aria-label="P2 Esquerda">◀</button>
+                    <button id="vbtn-p2-right" class="vbtn" aria-label="P2 Direita">▶</button>
+                    <button id="vbtn-p2-jump" class="vbtn" aria-label="P2 Pulo">▲ Pulo</button>
+                    <button id="vbtn-p2-block" class="vbtn" aria-label="P2 Defesa">▼ Def</button>
+                    <button id="vbtn-p2-punch" class="vbtn vbtn-atk p2-atk" aria-label="P2 Soco">👊 Soco [K]</button>
+                    <button id="vbtn-p2-kick" class="vbtn vbtn-atk p2-atk" aria-label="P2 Chute">🦵 Chute [L]</button>
+                    <button id="vbtn-p2-special" class="vbtn vbtn-spec p2-spec" aria-label="P2 Especial">★ Esp [P]</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Legenda de Comandos de Teclado -->
+        <footer id="keyboard-legend">
+            <div class="legend-group">
+                <strong>🎮 Jogador 1:</strong> [A][D] Mover | [W] Pular | [S] Defender | [F] Soco | [G] Chute | [H] Especial
+            </div>
+            <div class="legend-group">
+                <strong>🎮 Jogador 2:</strong> [Setas] Mover/Pulo/Def | [K] ou [J] Soco | [L] Chute | [P] Especial | [NumPad 1,2,3]
+            </div>
+        </footer>
+    </main>
+
+    <!-- Script do Jogo Super Otimizado para Desempenho Máximo (Zero Lag) -->
+    <script src="js/bundle.js"></script>
+</body>
+</html>
